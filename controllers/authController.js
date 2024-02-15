@@ -1,5 +1,13 @@
+const path = require('path');
+const dotenv = require('dotenv');
+
 const User = require("../models/User");
 const jwt = require('jsonwebtoken');
+
+const envFilePath = path.resolve(__dirname, '/home/kathurima/Documents/Personal/Credentials', '.env');
+dotenv.config({ path: envFilePath });
+
+const jwtSecret = process.env.JWT_SECRET;
 
 // handle errors
 const handleErrors = (err) => {
@@ -38,7 +46,8 @@ const handleErrors = (err) => {
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
-  return jwt.sign({ id }, 'net ninja secret', {
+  //
+  return jwt.sign({ id }, jwtSecret, {
     expiresIn: maxAge
   });
 };
@@ -82,4 +91,9 @@ module.exports.login_post = async (req, res) => {
     res.status(400).json({ errors });
   }
 
+}
+
+module.exports.logout_get = (req, res) => {
+  res.clearCookie('jwt');
+  res.redirect('/');
 }
